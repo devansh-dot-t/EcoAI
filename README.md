@@ -19,7 +19,7 @@ EcoAI is a lightweight web application that helps users estimate their daily car
 ## Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ecoai.git
+   git clone https://github.com/devansh-dot-t/ecoai.git
    cd ecoai
    ```
 2. Create a virtual environment:
