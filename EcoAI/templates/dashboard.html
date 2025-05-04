@@ -1,0 +1,150 @@
+<!-- EcoAI - Integrated with Flask/Jinja2 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoAI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>html { scroll-behavior: smooth; }</style>
+  <script>
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 10) {
+        nav.classList.add('shadow-md', 'border-b');
+      } else {
+        nav.classList.remove('shadow-md', 'border-b');
+      }
+    });
+  </script>
+</head>
+<body class="bg-[#f9fcfb] text-gray-800 pt-24">
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center px-6 py-4 bg-white/90 backdrop-blur shadow">
+    <a href="#" class="text-green-600 font-bold text-2xl">EcoAI</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center py-20 px-6">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Understand Your <span class="text-green-600">Carbon</span> <span class="text-blue-500">Footprint</span></h1>
+    <p class="text-lg max-w-2xl mx-auto mb-8">Track your daily habits and discover personalized ways to reduce your environmental impact.</p>
+    <div class="space-x-4">
+      <a href="#form" class="bg-green-600 text-white px-6 py-3 rounded-md font-medium">Calculate My Footprint</a>
+    </div>
+  </section>
+
+  <!-- Feature Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 pb-20 max-w-5xl mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="font-bold text-lg mb-2">Easy to Use</h3>
+      <p>Simple questionnaire about your daily habits</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="font-bold text-lg mb-2">Personalized</h3>
+      <p>Get recommendations tailored to your lifestyle</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="font-bold text-lg mb-2">Make an Impact</h3>
+      <p>Small changes lead to significant results</p>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <section id="form" class="bg-white py-16 px-6 max-w-4xl mx-auto rounded-xl shadow">
+    <h2 class="text-2xl font-bold mb-6">Calculate Your Carbon Footprint</h2>
+    <form method="POST" class="space-y-6">
+      <div>
+        <label class="block font-medium">Daily Transport (km):</label>
+        <input type="number" name="transport" step="0.1" required class="w-full mt-1 border p-2 rounded">
+      </div>
+      <div>
+        <label class="block font-medium">Daily Energy Use (kWh):</label>
+        <input type="number" name="energy" step="0.1" required class="w-full mt-1 border p-2 rounded">
+      </div>
+      <div>
+        <label class="block font-medium">Daily Meat Consumption (kg):</label>
+        <input type="number" name="meat" step="0.1" required class="w-full mt-1 border p-2 rounded">
+      </div>
+      <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded font-medium">See My Results</button>
+    </form>
+  </section>
+
+  {% if prediction %}
+  <!-- Result Display -->
+  <section class="max-w-4xl mx-auto px-6 py-16">
+    <div class="bg-white p-6 rounded-lg shadow text-center">
+      <h3 class="text-lg font-medium mb-2">Your Carbon Footprint</h3>
+      <p class="text-3xl font-bold text-blue-500 mb-1">{{ prediction }} kg CO₂/day</p>
+      {% if prediction|float <= 2 %}
+        <span class="text-green-700 font-semibold">Low Impact</span>
+        <div class="w-full bg-gray-200 h-2 rounded mt-4">
+          <div class="bg-green-600 h-2 rounded" style="width: 20%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">Your carbon footprint is low. Great job! You're well within sustainable limits.</p>
+      {% elif prediction|float <= 12 %}
+        <span class="text-yellow-600 font-semibold">Moderate Impact</span>
+        <div class="w-full bg-gray-200 h-2 rounded mt-4">
+          <div class="bg-yellow-500 h-2 rounded" style="width: 60%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">Your carbon footprint is around average. Small improvements can make a big difference.</p>
+      {% else %}
+        <span class="text-red-600 font-semibold">High Impact</span>
+        <div class="w-full bg-gray-200 h-2 rounded mt-4">
+          <div class="bg-red-500 h-2 rounded" style="width: 90%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">Your carbon footprint is higher than average. Making some key changes could help reduce it.</p>
+      {% endif %}
+    </div>
+
+    <!-- Breakdown & Comparison -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+      <div class="bg-white p-4 rounded shadow">
+        <h4 class="font-bold mb-2">Impact Breakdown</h4>
+        <p>Transportation: {{ transport_pct }}%</p>
+        <p>Home Energy: {{ energy_pct }}%</p>
+        <p>Lifestyle: {{ meat_pct }}%</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <h4 class="font-bold mb-2">Comparison</h4>
+        <p><span class="font-semibold">Average:</span> 12 tons CO₂/year</p>
+        <p><span class="font-semibold">Sustainable Target:</span> 2 tons CO₂/year</p>
+      </div>
+    </div>
+  </section>
+
+  {% if prediction and prediction|float > 2 %}
+  <section class="max-w-4xl mx-auto px-6 pb-20">
+    <h3 class="text-2xl font-bold mb-6">Recommended Actions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% if transport_pct >= 30 %}
+<div class="bg-white p-4 rounded shadow">
+  <h4 class="font-bold mb-1">Optimize Your Transportation</h4>
+  <p class="text-sm">Consider using public transport, carpooling, biking, or taking fewer flights to reduce emissions from travel.</p>
+  <p class="text-sm mt-2 text-green-600 font-semibold">Potential Saving: 1-4 tons CO₂/year</p>
+</div>
+{% endif %}
+      {% if energy_pct >= 30 %}
+      <div class="bg-white p-4 rounded shadow">
+        <h4 class="font-bold mb-1">Switch to Renewable Energy</h4>
+        <p class="text-sm">Change your electricity provider to one offering renewables.</p>
+        <p class="text-sm mt-2 text-green-600 font-semibold">Potential Saving: 1.5-3 tons CO₂/year</p>
+      </div>
+      {% endif %}
+      {% if meat_pct >= 30 %}
+      <div class="bg-white p-4 rounded shadow">
+        <h4 class="font-bold mb-1">Eat Less Meat</h4>
+        <p class="text-sm">Consider a plant-based or flexitarian diet to cut emissions.</p>
+        <p class="text-sm mt-2 text-green-600 font-semibold">Potential Saving: 0.5-2 tons CO₂/year</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+  {% endif %}
+
+  <!-- Footer -->
+  <footer class="text-center py-6 text-sm border-t bg-white text-gray-500">
+    EcoAI © 2023 · Helping you reduce your carbon footprint, one habit at a time.
+  </footer>
+</body>
+</html>
